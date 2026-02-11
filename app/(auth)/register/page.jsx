@@ -1,33 +1,43 @@
 "use client";
 import { useState } from "react";
-
+import { useRouter } from "next/navigation";
 export default function RegisterPage() {
+  
+  const router = useRouter();
   const [form, setForm] = useState({
-    name: "",
+    username: "",
     leetcodeUsername: ""
   });
   const [isLoading, setIsLoading] = useState(false);
   const [focusedField, setFocusedField] = useState(null);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  setIsLoading(true);
 
-    try {
-      const res = await fetch("/api/users", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form)
-      });
+  try {
+    const res = await fetch("/api/users", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form)
+    });
 
-      const data = await res.json();
-      alert(data.message);
-    } catch (error) {
-      alert("Registration failed. Please try again.");
-    } finally {
-      setIsLoading(false);
+    const data = await res.json();
+    if (!res.ok) {
+      alert("Registration failed");
+      return;
     }
-  };
+
+    // ✅ Only redirect when success
+    router.push("/leaderboard");
+
+  } catch (error) {
+    alert("Server error. Try again.");
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 flex items-center justify-center p-4 relative overflow-hidden">
@@ -96,11 +106,11 @@ export default function RegisterPage() {
                 <input
                   type="text"
                   placeholder="John Doe"
-                  value={form.name}
+                  value={form.username}
                   onFocus={() => setFocusedField('name')}
                   onBlur={() => setFocusedField(null)}
                   className="relative w-full p-4 border-2 border-gray-200 rounded-xl text-gray-800 bg-white/90 backdrop-blur-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition-all duration-300 outline-none"
-                  onChange={e => setForm({...form, name: e.target.value})}
+                  onChange={e => setForm({...form, username: e.target.value})}
                   required
                 />
               </div>

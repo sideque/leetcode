@@ -2,7 +2,7 @@ import User from "../models/User";
 import { fetchLeetCodeStats } from "../services/leetcodeService";
 
 export const registerUser = async (data) => {
-  const { name, leetcodeUsername } = data;
+  const { name, username, leetcodeUsername } = data;
 
   // AUTO FETCH REAL STATS
   const stats = await fetchLeetCodeStats(leetcodeUsername);
@@ -13,7 +13,7 @@ export const registerUser = async (data) => {
     stats.hard * 3;
 
   const user = new User({
-    name,
+    name: name || username,
     leetcodeUsername,
     easySolved: stats.easy,
     mediumSolved: stats.medium,
